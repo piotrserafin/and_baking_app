@@ -1,28 +1,50 @@
-package pl.piotrserafin.bakingapp;
+package pl.piotrserafin.bakingapp.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import java.util.ArrayList;
 
-import pl.piotrserafin.bakingapp.model.Recipe;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import pl.piotrserafin.bakingapp.R;
 import pl.piotrserafin.bakingapp.api.RecipeApiClient;
+import pl.piotrserafin.bakingapp.model.Recipe;
+import pl.piotrserafin.bakingapp.ui.adapter.RecipesAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements RecipesAdapter.RecipesAdapterOnClickHandler {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+
+    @BindView(R.id.recipesGridView)
+    RecyclerView recipesRecyclerView;
+
+    private RecipesAdapter recipesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ButterKnife.bind(this);
+
+        recipesRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        recipesAdapter = new RecipesAdapter(this, this, new ArrayList<>());
+        recipesRecyclerView.setAdapter(recipesAdapter);
 
         fetchRecipes();
+    }
+
+    @Override
+    public void onClick(Recipe recipe) {
+        Log.d(TAG, "Clicked recipe: " + recipe.getName());
     }
 
     private void fetchRecipes() {
@@ -37,7 +59,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 ArrayList<Recipe> recipes = response.body();
 
-                Log.d(TAG, recipes.toString());
+                if(recipes.isEmpty()) {
+                    return;
+                }
+                recipesAdapter.setRecipesList(recipes);
             }
 
             @Override
