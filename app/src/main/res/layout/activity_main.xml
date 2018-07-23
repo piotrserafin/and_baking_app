@@ -6,7 +6,7 @@
     android:id="@+id/main_activity_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MainActivity"
+    tools:context=".ui.RecipesActivity"
     android:orientation="vertical">
 
     <android.support.v7.widget.RecyclerView

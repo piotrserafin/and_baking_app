@@ -1,5 +1,6 @@
 package pl.piotrserafin.bakingapp.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,7 +19,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity
+public class RecipesActivity extends AppCompatActivity
         implements RecipesAdapter.RecipesAdapterOnClickHandler {
 
     @BindView(R.id.recipesGridView)
@@ -41,7 +42,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(Recipe recipe) { Timber.d("Clicked recipe: %s", recipe.getName()); }
+    public void onClick(Recipe recipe) {
+        Timber.d("Clicked recipe: %s", recipe.getName());
+
+        Intent recipeDetailsIntent =
+                new Intent(RecipesActivity.this, RecipeDetailsActivity.class);
+        recipeDetailsIntent.putExtra(getString(R.string.recipe), recipe);
+        startActivity(recipeDetailsIntent);
+    }
 
     private void fetchRecipes() {
 

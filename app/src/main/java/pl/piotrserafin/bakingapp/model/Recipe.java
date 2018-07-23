@@ -1,10 +1,33 @@
 package pl.piotrserafin.bakingapp.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class Recipe {
+public class Recipe implements Parcelable{
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Recipe createFromParcel(Parcel in) {
+            return new Recipe(in);
+        }
+
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+        }
+    };
+
+    Recipe(Parcel in) {
+        this.id = in.readLong();
+        this.name = in.readString();
+        in.readTypedList(this.ingredients, Ingredient.CREATOR);
+        in.readTypedList(this.steps, Recipe.CREATOR);
+        this.servings = in.readInt();
+        this.image = in.readString();
+    }
+
 
     public Recipe(int id, String name, ArrayList<Ingredient> ingredients, ArrayList<Step> steps, int servings, String image) {
         this.id = id;
@@ -16,16 +39,16 @@ public class Recipe {
     }
 
     @SerializedName("id")
-    private int id;
+    private long id;
 
     @SerializedName("name")
     private String name;
 
     @SerializedName("ingredients")
-    private ArrayList<Ingredient> ingredients;
+    private ArrayList<Ingredient> ingredients = new ArrayList<>();
 
     @SerializedName("steps")
-    private ArrayList<Step> steps;
+    private ArrayList<Step> steps = new ArrayList<>();
 
     @SerializedName("servings")
     private int servings;
@@ -33,7 +56,7 @@ public class Recipe {
     @SerializedName("image")
     private String image;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -79,5 +102,20 @@ public class Recipe {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeString(name);
+        parcel.writeTypedList(ingredients);
+        parcel.writeTypedList(steps);
+        parcel.writeInt(servings);
+        parcel.writeString(image);
     }
 }
