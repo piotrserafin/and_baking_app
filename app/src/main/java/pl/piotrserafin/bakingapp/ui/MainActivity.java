@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -17,11 +16,10 @@ import pl.piotrserafin.bakingapp.ui.adapter.RecipesAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity
         implements RecipesAdapter.RecipesAdapterOnClickHandler {
-
-    public static final String TAG = MainActivity.class.getSimpleName();
 
     @BindView(R.id.recipesGridView)
     RecyclerView recipesRecyclerView;
@@ -43,9 +41,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(Recipe recipe) {
-        Log.d(TAG, "Clicked recipe: " + recipe.getName());
-    }
+    public void onClick(Recipe recipe) { Timber.d("Clicked recipe: %s", recipe.getName()); }
 
     private void fetchRecipes() {
 
