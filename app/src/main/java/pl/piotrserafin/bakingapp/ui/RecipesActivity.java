@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,10 @@ import timber.log.Timber;
 public class RecipesActivity extends AppCompatActivity
         implements RecipesAdapter.RecipesAdapterOnClickHandler {
 
-    @BindView(R.id.recipesGridView)
+    @BindView(R.id.recipes_activity_toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.recipes_activity_recycler_view)
     RecyclerView recipesRecyclerView;
 
     private RecipesAdapter recipesAdapter;
@@ -33,6 +37,9 @@ public class RecipesActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        toolbar.setTitle(getTitle());
 
         recipesRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         recipesAdapter = new RecipesAdapter(this, this, new ArrayList<>());
