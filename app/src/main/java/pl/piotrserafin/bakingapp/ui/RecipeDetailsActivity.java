@@ -6,10 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.piotrserafin.bakingapp.R;
+import pl.piotrserafin.bakingapp.model.Ingredient;
 import pl.piotrserafin.bakingapp.model.Recipe;
 import pl.piotrserafin.bakingapp.model.Step;
 import pl.piotrserafin.bakingapp.ui.adapter.RecipeDetailsAdapter;
@@ -20,6 +24,9 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
 
     @BindView(R.id.recipe_details_activity_toolbar)
     Toolbar toolbar;
+
+    @BindView(R.id.ingredients_list)
+    TextView ingredientsList;
 
     @BindView(R.id.recipe_details_list)
     RecyclerView stepsRecyclerView;
@@ -48,7 +55,7 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
             recipe = bundle.getParcelable(getString(R.string.recipe));
 
             stepsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recipeDetailsAdapter = new RecipeDetailsAdapter(this, this, recipe);
+            recipeDetailsAdapter = new RecipeDetailsAdapter(this, this, recipe.getSteps());
             stepsRecyclerView.setAdapter(recipeDetailsAdapter);
         }
 
@@ -58,6 +65,24 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        populateIngredients();
+
+    }
+
+    private void populateIngredients() {
+        StringBuilder ingValue = new StringBuilder();
+        for (int i = 0; i < recipe.getIngredients().size(); i++) {
+            Ingredient ingredient = recipe.getIngredients().get(i);
+            ingValue.append(String.format(Locale.getDefault(),
+                    "• %s (%.2f %s)",
+                    ingredient.getIngredient(),
+                    ingredient.getQuantity(),
+                    ingredient.getMeasure()));
+
+            if (i != recipe.getIngredients().size() - 1)
+                ingValue.append("\n");
+        }
+        ingredientsList.setText(ingValue.toString());
     }
 
     @Override

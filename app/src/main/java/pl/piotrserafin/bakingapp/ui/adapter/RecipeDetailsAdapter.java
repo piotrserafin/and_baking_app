@@ -8,87 +8,65 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.piotrserafin.bakingapp.R;
-import pl.piotrserafin.bakingapp.model.Ingredient;
-import pl.piotrserafin.bakingapp.model.Recipe;
 import pl.piotrserafin.bakingapp.model.Step;
 
-public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecipeDetailsAdapter.RecipeDetailsAdapterViewHolder> {
 
     private final Context context;
     final private RecipeDetailsAdapterOnClickHandler clickHandler;
-    private Recipe recipe;
+    private ArrayList<Step> steps;
 
     public interface RecipeDetailsAdapterOnClickHandler {
         void onClick(Step step);
     }
 
     public RecipeDetailsAdapter(Context context, RecipeDetailsAdapterOnClickHandler clickHandler,
-                          Recipe recipe) {
+                                ArrayList<Step> steps) {
         this.context = context;
         this.clickHandler = clickHandler;
-        this.recipe = recipe;
+        this.steps = steps;
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == 0) { // Ingredients
-            return new IngredientsAdapterViewHolder(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.ingredient_row_item, parent, false));
-        } else { // Steps
-            return new StepsAdapterViewHolder(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.step_row_item, parent, false));
-        }
+    public RecipeDetailsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.step_row_item, parent, false);
+        return new RecipeDetailsAdapterViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof IngredientsAdapterViewHolder) {
-            IngredientsAdapterViewHolder ingredientsAdapterViewHolder = (IngredientsAdapterViewHolder) holder;
-
-            StringBuilder ingValue = new StringBuilder();
-            for (int i = 0; i < recipe.getIngredients().size(); i++) {
-                Ingredient ingredient = recipe.getIngredients().get(i);
-                ingValue.append(String.format(Locale.getDefault(), "• %s (%.2f %s)", ingredient.getIngredient(), ingredient.getQuantity(), ingredient.getMeasure()));
-                if (i != recipe.getIngredients().size() - 1)
-                    ingValue.append("\n");
-            }
-
-            ingredientsAdapterViewHolder.ingredientsList.setText(ingValue.toString());
-
-        } else if(holder instanceof StepsAdapterViewHolder) {
-            StepsAdapterViewHolder stepsAdapterViewHolder = (StepsAdapterViewHolder) holder;
-
-            Step step = recipe.getSteps().get(position);
-            stepsAdapterViewHolder.stepShortDescription.setText(step.getShortDescription());
-        }
+    public void onBindViewHolder(@NonNull RecipeDetailsAdapterViewHolder holder, int position) {
+        Step step = steps.get(position);
+        holder.stepShortDescription.setText(step.getShortDescription());
     }
 
     @Override
     public int getItemCount() {
-        return (recipe.getSteps() == null) ? 0 : recipe.getSteps().size(); //Ingredients
+        return (steps == null) ? 0 : steps.size();
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        if(position == 0) {
-            return 0;
-        } else {
-            return 1;
-        }
+    public void setSteps(List<Step> steps) {
+        this.steps.clear();
+        this.steps.addAll(steps);
+        notifyDataSetChanged();
     }
 
-    public class StepsAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public ArrayList<Step> getSteps() {
+        return steps;
+    }
+
+    public class RecipeDetailsAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.step_short_description)
         TextView stepShortDescription;
 
-        public StepsAdapterViewHolder(View view) {
+        public RecipeDetailsAdapterViewHolder(View view) {
             super(view);
 
             ButterKnife.bind(this, view);
@@ -99,20 +77,8 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecyclerView.View
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
-            Step step = recipe.getSteps().get(position);
+            Step step = steps.get(position);
             clickHandler.onClick(step);
-        }
-    }
-
-    public class IngredientsAdapterViewHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.ingredients_text)
-        TextView ingredientsList;
-
-        public IngredientsAdapterViewHolder(View view) {
-            super(view);
-
-            ButterKnife.bind(this, view);
         }
     }
 }
