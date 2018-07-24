@@ -11,6 +11,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import pl.piotrserafin.bakingapp.R;
 import pl.piotrserafin.bakingapp.model.Recipe;
 
@@ -61,12 +63,13 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesA
 
     public class RecipesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        final TextView recipeName;
+        @BindView(R.id.recipe_name)
+        TextView recipeName;
 
         public RecipesAdapterViewHolder(View view) {
             super(view);
 
-            recipeName = view.findViewById(R.id.recipe_name);
+            ButterKnife.bind(this, view);
 
             view.setOnClickListener(this);
         }
