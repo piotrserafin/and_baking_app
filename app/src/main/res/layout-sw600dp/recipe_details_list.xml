@@ -28,7 +28,7 @@
         android:layout_marginRight="16dp"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:context="com.piotrserafin.masterdetailflowtest.RecipeListActivity"
-        tools:listitem="@layout/recipe_details_list_content" />
+        tools:listitem="@layout/step_row_item" />
 
     <FrameLayout
         android:id="@+id/recipe_details_list_container"

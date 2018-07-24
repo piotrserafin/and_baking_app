@@ -18,19 +18,19 @@ public class Ingredient implements Parcelable {
     };
 
     Ingredient(Parcel in) {
-        this.quantity = in.readDouble();
+        this.quantity = in.readFloat();
         this.measure = in.readString();
         this.ingredient = in.readString();
     }
 
-    public Ingredient(double quantity, String measure, String ingredient) {
+    public Ingredient(float quantity, String measure, String ingredient) {
         this.quantity = quantity;
         this.measure = measure;
         this.ingredient = ingredient;
     }
 
     @SerializedName("quantity")
-    private double quantity;
+    private float quantity;
 
     @SerializedName("measure")
     private String measure;
@@ -42,7 +42,7 @@ public class Ingredient implements Parcelable {
         return quantity;
     }
 
-    public void setQuantity(double quantity) {
+    public void setQuantity(float quantity) {
         this.quantity = quantity;
     }
 
@@ -69,7 +69,7 @@ public class Ingredient implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeDouble(quantity);
+        parcel.writeFloat(quantity);
         parcel.writeString(measure);
         parcel.writeString(ingredient);
     }

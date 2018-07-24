@@ -48,7 +48,7 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
             recipe = bundle.getParcelable(getString(R.string.recipe));
 
             stepsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recipeDetailsAdapter = new RecipeDetailsAdapter(this, this, recipe.getSteps());
+            recipeDetailsAdapter = new RecipeDetailsAdapter(this, this, recipe);
             stepsRecyclerView.setAdapter(recipeDetailsAdapter);
         }
 
