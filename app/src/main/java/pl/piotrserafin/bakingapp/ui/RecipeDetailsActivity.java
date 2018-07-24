@@ -1,5 +1,6 @@
 package pl.piotrserafin.bakingapp.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -46,7 +47,7 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        if (findViewById(R.id.recipe_details_list_container) != null) {
+        if (findViewById(R.id.step_details_list_container) != null) {
             twoPane = true;
         }
 
@@ -89,16 +90,19 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
     public void onClick(Step step) {
         if (twoPane) {
             Timber.d("OnClick(): TwoPaneMode");
-//            Bundle bundle = new Bundle();
-//            Fragment fragment = new Fragment();
-//            fragment.setArguments(bundle);
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.recipe_details_list_container, fragment)
-//                    .commit();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(getString(R.string.step), step);
+            StepDetailsFragment fragment = new StepDetailsFragment();
+            fragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.step_details_list_container, fragment)
+                    .commit();
         } else {
             Timber.d("OnClick(): SinglePaneMode");
-//            Intent recipeStepsIntent = new Intent(RecipeDetailsActivity.this, RecipeStepsActivity.class);
-//            startActivity(recipeStepsIntent);
+            Intent stepDetailsIntent =
+                    new Intent(RecipeDetailsActivity.this, StepDetailsActivity.class);
+            stepDetailsIntent.putExtra(getString(R.string.step), step);
+            startActivity(stepDetailsIntent);
         }
     }
 }

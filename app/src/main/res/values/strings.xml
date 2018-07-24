@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Baking App</string>
+
+
+    <!--Bundle Ids-->
     <string name="recipe">RECIPE</string>
+    <string name="step">STEP</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
