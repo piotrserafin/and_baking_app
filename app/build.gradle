@@ -9,6 +9,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        android.defaultConfig.vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -46,4 +48,7 @@ dependencies {
 
     //Timber logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    //ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
 }
