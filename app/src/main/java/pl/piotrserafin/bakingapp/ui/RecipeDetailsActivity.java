@@ -16,7 +16,6 @@ import butterknife.ButterKnife;
 import pl.piotrserafin.bakingapp.R;
 import pl.piotrserafin.bakingapp.model.Ingredient;
 import pl.piotrserafin.bakingapp.model.Recipe;
-import pl.piotrserafin.bakingapp.model.Step;
 import pl.piotrserafin.bakingapp.ui.adapter.RecipeDetailsAdapter;
 import timber.log.Timber;
 
@@ -56,16 +55,15 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
             stepsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             recipeDetailsAdapter = new RecipeDetailsAdapter(this, this, recipe.getSteps());
             stepsRecyclerView.setAdapter(recipeDetailsAdapter);
+
+            populateIngredients();
         }
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+        if (actionBar != null && recipe != null) {
             actionBar.setTitle(recipe.getName());
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        populateIngredients();
-
     }
 
     private void populateIngredients() {
@@ -85,11 +83,11 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onClick(Step step) {
+    public void onClick(int position) {
         if (twoPane) {
             Timber.d("OnClick(): TwoPaneMode");
             Bundle bundle = new Bundle();
-            bundle.putParcelable(getString(R.string.step), step);
+            bundle.putParcelable(getString(R.string.step), recipe.getSteps().get(position));
             StepDetailsFragment fragment = new StepDetailsFragment();
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
@@ -99,7 +97,8 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
             Timber.d("OnClick(): SinglePaneMode");
             Intent stepDetailsIntent =
                     new Intent(RecipeDetailsActivity.this, StepDetailsActivity.class);
-            stepDetailsIntent.putExtra(getString(R.string.step), step);
+            stepDetailsIntent.putExtra(getString(R.string.steps), recipe.getSteps());
+            stepDetailsIntent.putExtra(getString(R.string.step_position), position);
             startActivity(stepDetailsIntent);
         }
     }

@@ -1,26 +1,31 @@
 package pl.piotrserafin.bakingapp.ui;
 
-import android.content.Intent;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
-import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.piotrserafin.bakingapp.R;
 import pl.piotrserafin.bakingapp.model.Step;
-import pl.piotrserafin.bakingapp.ui.adapter.RecipeDetailsAdapter;
 
 public class StepDetailsActivity extends AppCompatActivity {
 
-    private Step step;
+    private ArrayList<Step> steps;
+    private int position = 0;
 
     @BindView(R.id.step_details_activity_toolbar)
     Toolbar toolbar;
+
+    @BindView(R.id.fab_left)
+    FloatingActionButton fabLeft;
+
+    @BindView(R.id.fab_right)
+    FloatingActionButton fabRight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,20 +41,50 @@ public class StepDetailsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        fabLeft.setOnClickListener(view -> {
+            position--;
+            stepTransition(steps.get(calculatePosition()));
+        });
+
+        fabRight.setOnClickListener(view -> {
+            position++;
+            stepTransition(steps.get(calculatePosition()));
+        });
 
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null && bundle.containsKey(getString(R.string.step))) {
-            step = bundle.getParcelable(getString(R.string.step));
+        if (bundle != null && bundle.containsKey(getString(R.string.steps))
+                && bundle.containsKey(getString(R.string.step_position))) {
+            steps = bundle.getParcelableArrayList(getString(R.string.steps));
+            position = bundle.getInt(getString(R.string.step_position));
         }
 
         if (savedInstanceState == null) {
             Bundle stepBundle = new Bundle();
-            stepBundle.putParcelable(getString(R.string.step),step);
+            stepBundle.putParcelable(getString(R.string.step),steps.get(position));
             StepDetailsFragment fragment = new StepDetailsFragment();
             fragment.setArguments(stepBundle);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.step_details_container, fragment)
                     .commit();
         }
+    }
+
+    private int calculatePosition() {
+        if(position >= steps.size()) {
+            position = 0;
+        } else if (position < 0) {
+            position = steps.size() - 1;
+        }
+        return position;
+    }
+
+    private void stepTransition(Step step) {
+        Bundle stepBundle = new Bundle();
+        stepBundle.putParcelable(getString(R.string.step), step);
+        StepDetailsFragment fragment = new StepDetailsFragment();
+        fragment.setArguments(stepBundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.step_details_container, fragment)
+                .commit();
     }
 }
