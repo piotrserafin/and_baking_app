@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -47,7 +48,15 @@ public class RecipesActivity extends AppCompatActivity
             actionBar.setTitle(getTitle());
         }
 
-        recipesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recipesRecyclerView.setHasFixedSize(true);
+
+        boolean twoPane = getResources().getBoolean(R.bool.twoPane);
+        if (twoPane) {
+            recipesRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+        } else {
+            recipesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
+
         recipesAdapter = new RecipesAdapter(this, this, new ArrayList<>());
         recipesRecyclerView.setAdapter(recipesAdapter);
 

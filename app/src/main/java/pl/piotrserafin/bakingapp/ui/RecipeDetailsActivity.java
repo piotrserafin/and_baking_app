@@ -47,9 +47,7 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        if (findViewById(R.id.step_details_list_container) != null) {
-            twoPane = true;
-        }
+        twoPane = getResources().getBoolean(R.bool.twoPane);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && bundle.containsKey(getString(R.string.recipe))) {
