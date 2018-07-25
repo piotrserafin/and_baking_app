@@ -33,6 +33,14 @@ public class Step implements Parcelable {
         this.thumbnailURL = thumbnailURL;
     }
 
+    public Step() {
+        this.id = 0;
+        this.shortDescription = "";
+        this.description = "";
+        this.videoURL = "";
+        this.thumbnailURL = "";
+    }
+
     @SerializedName("id")
     private long id;
 

@@ -40,6 +40,15 @@ public class Recipe implements Parcelable{
         this.image = image;
     }
 
+    public Recipe() {
+        this.id = 0;
+        this.name = "";
+        this.ingredients = new ArrayList<>();
+        this.steps = new ArrayList<>();
+        this.servings = 0;
+        this.image = "";
+    }
+
     @SerializedName("id")
     private long id;
 

@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -17,6 +20,7 @@ import pl.piotrserafin.bakingapp.R;
 import pl.piotrserafin.bakingapp.model.Ingredient;
 import pl.piotrserafin.bakingapp.model.Recipe;
 import pl.piotrserafin.bakingapp.ui.adapter.RecipeDetailsAdapter;
+import pl.piotrserafin.bakingapp.widget.IngredientsWidgetRemoteViewService;
 import timber.log.Timber;
 
 public class RecipeDetailsActivity extends AppCompatActivity implements
@@ -101,5 +105,22 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
             stepDetailsIntent.putExtra(getString(R.string.step_position), position);
             startActivity(stepDetailsIntent);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.recipe_details_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_add_to_widget) {
+            IngredientsWidgetRemoteViewService.updateWidget(this, recipe);
+            return true;
+        } else
+            return super.onOptionsItemSelected(item);
     }
 }
