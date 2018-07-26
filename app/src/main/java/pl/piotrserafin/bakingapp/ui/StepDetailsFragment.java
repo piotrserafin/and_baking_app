@@ -92,6 +92,8 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
         if(!TextUtils.isEmpty(step.getVideoURL())) {
             initializeMediaSession();
             initializePlayer(Uri.parse(step.getVideoURL()));
+        } else {
+            playerView.setVisibility(View.GONE);
         }
 
         return rootView;
