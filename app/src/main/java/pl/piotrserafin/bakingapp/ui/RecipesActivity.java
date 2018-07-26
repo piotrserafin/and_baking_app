@@ -2,6 +2,9 @@ package pl.piotrserafin.bakingapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,10 +17,12 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pl.piotrserafin.bakingapp.BakingApp;
 import pl.piotrserafin.bakingapp.R;
 import pl.piotrserafin.bakingapp.api.RecipeApiClient;
 import pl.piotrserafin.bakingapp.model.Recipe;
 import pl.piotrserafin.bakingapp.ui.adapter.RecipesAdapter;
+import pl.piotrserafin.bakingapp.util.RecipesIdlingResource;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,6 +38,20 @@ public class RecipesActivity extends AppCompatActivity
     RecyclerView recipesRecyclerView;
 
     private RecipesAdapter recipesAdapter;
+    private BakingApp application;
+
+    // The Idling Resource which will be null in production.
+    @Nullable
+    private RecipesIdlingResource idlingResource;
+
+    @VisibleForTesting
+    @NonNull
+    public RecipesIdlingResource getIdlingResource() {
+        if (idlingResource == null) {
+            idlingResource = new RecipesIdlingResource();
+        }
+        return idlingResource;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +70,12 @@ public class RecipesActivity extends AppCompatActivity
 
         prepareRecipesRecyclerView();
 
+        getIdlingResource().setIdleState(false);
+
         if(savedInstanceState != null) {
             ArrayList<Recipe> recipes= savedInstanceState.getParcelableArrayList(getString(R.string.recipes_key));
             recipesAdapter.setRecipesList(recipes);
+            updateLayout();
         } else {
             fetchRecipes();
         }
@@ -113,6 +135,8 @@ public class RecipesActivity extends AppCompatActivity
                     return;
                 }
                 recipesAdapter.setRecipesList(recipes);
+
+                getIdlingResource().setIdleState(true);
             }
 
             @Override
