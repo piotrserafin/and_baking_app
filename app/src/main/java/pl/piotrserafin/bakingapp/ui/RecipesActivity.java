@@ -8,6 +8,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -48,6 +49,18 @@ public class RecipesActivity extends AppCompatActivity
             actionBar.setTitle(getTitle());
         }
 
+        prepareRecipesRecyclerView();
+
+        if(savedInstanceState != null) {
+            ArrayList<Recipe> recipes= savedInstanceState.getParcelableArrayList(getString(R.string.recipes_key));
+            recipesAdapter.setRecipesList(recipes);
+        } else {
+            fetchRecipes();
+        }
+    }
+
+    private void prepareRecipesRecyclerView() {
+
         recipesRecyclerView.setHasFixedSize(true);
 
         boolean twoPane = getResources().getBoolean(R.bool.twoPane);
@@ -59,8 +72,17 @@ public class RecipesActivity extends AppCompatActivity
 
         recipesAdapter = new RecipesAdapter(this, this, new ArrayList<>());
         recipesRecyclerView.setAdapter(recipesAdapter);
+    }
 
-        fetchRecipes();
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        ArrayList<Recipe> recipes = recipesAdapter.getRecipes();
+
+        if (recipes != null && !recipes.isEmpty()) {
+            outState.putParcelableArrayList(getString(R.string.recipes_key), recipes);
+        }
     }
 
     @Override
@@ -69,7 +91,7 @@ public class RecipesActivity extends AppCompatActivity
 
         Intent recipeDetailsIntent =
                 new Intent(RecipesActivity.this, RecipeDetailsActivity.class);
-        recipeDetailsIntent.putExtra(getString(R.string.recipe), recipe);
+        recipeDetailsIntent.putExtra(getString(R.string.recipe_key), recipe);
         startActivity(recipeDetailsIntent);
     }
 
@@ -81,11 +103,13 @@ public class RecipesActivity extends AppCompatActivity
             public void onResponse(Call<ArrayList<Recipe>> call,
                                    Response<ArrayList<Recipe>> response) {
                 if (!response.isSuccessful()) {
+                    updateLayout();
                     return;
                 }
                 ArrayList<Recipe> recipes = response.body();
 
                 if(recipes.isEmpty()) {
+                    updateLayout();
                     return;
                 }
                 recipesAdapter.setRecipesList(recipes);
@@ -93,9 +117,17 @@ public class RecipesActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<ArrayList<Recipe>> moviesCall, Throwable t) {
-
+                updateLayout();
             }
         };
         recipesCall.enqueue(recipesCallback);
+    }
+
+    private void updateLayout() {
+        if (recipesAdapter.getItemCount() == 0) {
+            findViewById(R.id.no_connection).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.no_connection).setVisibility(View.GONE);
+        }
     }
 }

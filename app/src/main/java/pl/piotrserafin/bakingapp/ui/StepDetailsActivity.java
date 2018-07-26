@@ -41,6 +41,35 @@ public class StepDetailsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        //If restore
+        if (savedInstanceState != null && savedInstanceState.containsKey(getString(R.string.steps_key))) {
+            steps = savedInstanceState.getParcelable(getString(R.string.steps_key));
+            position = savedInstanceState.getInt(getString(R.string.step_position_key));
+
+        } else {
+
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null && bundle.containsKey(getString(R.string.steps_key))
+                    && bundle.containsKey(getString(R.string.step_position_key))) {
+                steps = bundle.getParcelableArrayList(getString(R.string.steps_key));
+                position = bundle.getInt(getString(R.string.step_position_key));
+            }
+
+            if(steps != null) {
+                Bundle stepBundle = new Bundle();
+                stepBundle.putParcelable(getString(R.string.step_key), steps.get(position));
+                StepDetailsFragment fragment = new StepDetailsFragment();
+                fragment.setArguments(stepBundle);
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.step_details_container, fragment)
+                        .commit();
+            }
+        }
+
+        prepareFabs();
+    }
+
+    private void prepareFabs() {
         fabLeft.setOnClickListener(view -> {
             position--;
             stepTransition(steps.get(calculatePosition()));
@@ -50,23 +79,21 @@ public class StepDetailsActivity extends AppCompatActivity {
             position++;
             stepTransition(steps.get(calculatePosition()));
         });
+    }
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null && bundle.containsKey(getString(R.string.steps))
-                && bundle.containsKey(getString(R.string.step_position))) {
-            steps = bundle.getParcelableArrayList(getString(R.string.steps));
-            position = bundle.getInt(getString(R.string.step_position));
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (steps != null && !steps.isEmpty()) {
+            outState.putParcelableArrayList(getString(R.string.steps_key), steps);
+            outState.putInt(getString(R.string.step_position_key), position);
         }
+    }
 
-        if (savedInstanceState == null) {
-            Bundle stepBundle = new Bundle();
-            stepBundle.putParcelable(getString(R.string.step),steps.get(position));
-            StepDetailsFragment fragment = new StepDetailsFragment();
-            fragment.setArguments(stepBundle);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.step_details_container, fragment)
-                    .commit();
-        }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private int calculatePosition() {
@@ -80,7 +107,7 @@ public class StepDetailsActivity extends AppCompatActivity {
 
     private void stepTransition(Step step) {
         Bundle stepBundle = new Bundle();
-        stepBundle.putParcelable(getString(R.string.step), step);
+        stepBundle.putParcelable(getString(R.string.step_key), step);
         StepDetailsFragment fragment = new StepDetailsFragment();
         fragment.setArguments(stepBundle);
         getSupportFragmentManager().beginTransaction()

@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -52,15 +53,27 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
 
         twoPane = getResources().getBoolean(R.bool.twoPane);
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null && bundle.containsKey(getString(R.string.recipe))) {
-            recipe = bundle.getParcelable(getString(R.string.recipe));
+        prepareRecipeRecyclerView();
 
-            stepsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recipeDetailsAdapter = new RecipeDetailsAdapter(this, this, recipe.getSteps());
-            stepsRecyclerView.setAdapter(recipeDetailsAdapter);
+        //If restore
+        if (savedInstanceState != null && savedInstanceState.containsKey(getString(R.string.recipe_key))) {
+            recipe = savedInstanceState.getParcelable(getString(R.string.recipe_key));
+            if(recipe != null) {
+                recipeDetailsAdapter.setSteps(recipe.getSteps());
+                populateIngredients();
+            }
 
-            populateIngredients();
+        } else {
+
+            //Get bundle passed by intent
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null && bundle.containsKey(getString(R.string.recipe_key))) {
+                recipe = bundle.getParcelable(getString(R.string.recipe_key));
+                if(recipe != null) {
+                    recipeDetailsAdapter.setSteps(recipe.getSteps());
+                    populateIngredients();
+                }
+            }
         }
 
         ActionBar actionBar = getSupportActionBar();
@@ -70,7 +83,13 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
         }
     }
 
-    private void populateIngredients() {
+    private void prepareRecipeRecyclerView() {
+        stepsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recipeDetailsAdapter = new RecipeDetailsAdapter(this, this, new ArrayList<>());
+        stepsRecyclerView.setAdapter(recipeDetailsAdapter);
+    }
+
+    private void populateIngredients(){
         StringBuilder ingValue = new StringBuilder();
         for (int i = 0; i < recipe.getIngredients().size(); i++) {
             Ingredient ingredient = recipe.getIngredients().get(i);
@@ -87,11 +106,19 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (recipe != null) {
+            outState.putParcelable(getString(R.string.recipe_key), recipe);
+        }
+    }
+
+    @Override
     public void onClick(int position) {
         if (twoPane) {
             Timber.d("OnClick(): TwoPaneMode");
             Bundle bundle = new Bundle();
-            bundle.putParcelable(getString(R.string.step), recipe.getSteps().get(position));
+            bundle.putParcelable(getString(R.string.step_key), recipe.getSteps().get(position));
             StepDetailsFragment fragment = new StepDetailsFragment();
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
@@ -101,10 +128,16 @@ public class RecipeDetailsActivity extends AppCompatActivity implements
             Timber.d("OnClick(): SinglePaneMode");
             Intent stepDetailsIntent =
                     new Intent(RecipeDetailsActivity.this, StepDetailsActivity.class);
-            stepDetailsIntent.putExtra(getString(R.string.steps), recipe.getSteps());
-            stepDetailsIntent.putExtra(getString(R.string.step_position), position);
+            stepDetailsIntent.putExtra(getString(R.string.steps_key), recipe.getSteps());
+            stepDetailsIntent.putExtra(getString(R.string.step_position_key), position);
             startActivity(stepDetailsIntent);
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override

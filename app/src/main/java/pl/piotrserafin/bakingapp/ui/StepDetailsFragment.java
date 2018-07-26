@@ -52,9 +52,10 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
 
     private SimpleExoPlayer player;
     private MediaSessionCompat mediaSession;
-    private PlaybackStateCompat.Builder stateBuilder;
+    private PlaybackStateCompat.Builder playbackStateBuilder;
 
-    private long currentPosition = 0;
+    private long playerCurrentPosition = 0;
+    private boolean playerPlayWhenReady = true;
 
     private Unbinder unbinder;
 
@@ -66,8 +67,8 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(getString(R.string.step))) {
-            step = getArguments().getParcelable(getString(R.string.step));
+        if (getArguments().containsKey(getString(R.string.step_key))) {
+            step = getArguments().getParcelable(getString(R.string.step_key));
         }
     }
 
@@ -76,6 +77,11 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_step_details, container, false);
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(getString(R.string.player_position_key))) {
+            playerCurrentPosition = savedInstanceState.getLong(getString(R.string.player_position_key));
+            playerPlayWhenReady = savedInstanceState.getBoolean(getString(R.string.player_play_when_ready_key));
+        }
 
         unbinder = ButterKnife.bind(this, rootView);
 
@@ -104,6 +110,13 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
         unbinder.unbind();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(getString(R.string.player_position_key), playerCurrentPosition);
+        outState.putBoolean(getString(R.string.player_play_when_ready_key), playerPlayWhenReady);
+    }
+
     private void initializeMediaSession() {
 
         mediaSession = new MediaSessionCompat(getContext(), TAG);
@@ -114,14 +127,13 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
 
         mediaSession.setMediaButtonReceiver(null);
 
-        stateBuilder = new PlaybackStateCompat.Builder()
-                .setActions(
-                        PlaybackStateCompat.ACTION_PLAY |
-                                PlaybackStateCompat.ACTION_PAUSE |
-                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
+        playbackStateBuilder = new PlaybackStateCompat.Builder().setActions(
+                PlaybackStateCompat.ACTION_PLAY |
+                        PlaybackStateCompat.ACTION_PAUSE |
+                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                        PlaybackStateCompat.ACTION_PLAY_PAUSE);
 
-        mediaSession.setPlaybackState(stateBuilder.build());
+        mediaSession.setPlaybackState(playbackStateBuilder.build());
         mediaSession.setCallback(new StepPlayerSessionCallback());
 
         mediaSession.setActive(true);
@@ -144,16 +156,18 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
 
             player.prepare(mediaSource);
             // onRestore
-            if (currentPosition != 0)
-                player.seekTo(currentPosition);
+            if (playerCurrentPosition != 0)
+                player.seekTo(playerCurrentPosition);
 
-            player.setPlayWhenReady(true);
+            player.setPlayWhenReady(playerPlayWhenReady);
         }
     }
 
-
     private void releasePlayer() {
         if (player != null) {
+            playerCurrentPosition = player.getCurrentPosition();
+            playerPlayWhenReady = player.getPlayWhenReady();
+
             player.stop();
             player.release();
             player = null;
@@ -178,13 +192,13 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if((playbackState == Player.STATE_READY) && playWhenReady){
-            stateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
+            playbackStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
                     player.getCurrentPosition(), 1f);
         } else if((playbackState == Player.STATE_READY)){
-            stateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
+            playbackStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                     player.getCurrentPosition(), 1f);
         }
-        mediaSession.setPlaybackState(stateBuilder.build());
+        mediaSession.setPlaybackState(playbackStateBuilder.build());
     }
 
     @Override

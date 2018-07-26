@@ -26,7 +26,6 @@
         android:padding="8dp"
         android:textColor="@color/primary_text"
         android:textSize="16sp"
-        android:text="@string/hello_blank_fragment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
