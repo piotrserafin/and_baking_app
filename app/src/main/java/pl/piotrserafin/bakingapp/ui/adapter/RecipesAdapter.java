@@ -6,13 +6,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.internal.Utils;
 import pl.piotrserafin.bakingapp.R;
 import pl.piotrserafin.bakingapp.model.Recipe;
 
@@ -44,6 +48,13 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesA
     public void onBindViewHolder(@NonNull RecipesAdapterViewHolder holder, int position) {
         Recipe recipe = recipeList.get(position);
         holder.recipeName.setText(recipe.getName());
+
+        String recipeImage = recipeList.get(position).getImage();
+        if (!recipeImage.isEmpty()) {
+            Picasso.get()
+                    .load(recipeImage)
+                    .into(holder.recipeImage);
+        }
     }
 
     @Override
@@ -65,6 +76,9 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesA
 
         @BindView(R.id.recipe_name)
         TextView recipeName;
+
+        @BindView(R.id.recipe_image)
+        ImageView recipeImage;
 
         public RecipesAdapterViewHolder(View view) {
             super(view);

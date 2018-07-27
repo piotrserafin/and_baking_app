@@ -15,5 +15,6 @@
     <string name="pref_ingredients_key">pref_ingredients_key</string>
 
     <string name="no_connection">Possible connection lost</string>
+    <string name="example_recipe_name">Nutella</string>
 
 </resources>

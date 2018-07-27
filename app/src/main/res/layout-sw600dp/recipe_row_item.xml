@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="150dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="8dp"
+    android:layout_margin="@dimen/margin_normal"
     android:clickable="true"
     android:focusable="true"
     app:cardCornerRadius="@dimen/cardview_corner_radius"
@@ -14,7 +14,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:padding="@dimen/padding_normal"
         android:orientation="vertical">
 
         <ImageView
@@ -30,11 +30,11 @@
             android:id="@+id/recipe_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="Nutella"
+            tools:text="@string/example_recipe_name"
             android:textSize="24sp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="16dp"
-            android:textColor="#FFFFFF"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginStart="@dimen/margin_large"
+            android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/recipe_image"

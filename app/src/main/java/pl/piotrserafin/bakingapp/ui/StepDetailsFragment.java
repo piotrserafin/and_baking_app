@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -28,6 +29,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,6 +46,9 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
 
     @BindView(R.id.step_player)
     PlayerView playerView;
+
+    @BindView(R.id.step_thumbnail)
+    ImageView stepThumbnail;
 
     @BindView(R.id.step_description)
     TextView stepDescription;
@@ -87,11 +92,21 @@ public class StepDetailsFragment extends Fragment implements Player.EventListene
 
         if (step != null) {
             stepDescription.setText(step.getDescription());
+
+            if(!step.getThumbnailURL().isEmpty()) {
+                Picasso.get()
+                        .load(step.getThumbnailURL())
+                        .placeholder(R.drawable.ic_baseline_room_service_black)
+                        .into(stepThumbnail);
+
+                stepThumbnail.setVisibility(View.VISIBLE);
+            }
         }
 
         if(!TextUtils.isEmpty(step.getVideoURL())) {
             initializeMediaSession();
             initializePlayer(Uri.parse(step.getVideoURL()));
+            playerView.setVisibility(View.VISIBLE);
         } else {
             playerView.setVisibility(View.GONE);
         }

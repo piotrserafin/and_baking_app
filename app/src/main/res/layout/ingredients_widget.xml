@@ -21,6 +21,6 @@
         android:layout_margin="@dimen/widget_margin"
         android:layout_weight="1"
         android:divider="@android:color/white"
-        android:dividerHeight="1dp" />
+        android:dividerHeight="@dimen/divider_height" />
 
 </LinearLayout>

@@ -55,7 +55,7 @@ public class StepDetailsActivity extends AppCompatActivity {
                 position = bundle.getInt(getString(R.string.step_position_key));
             }
 
-            if(steps != null) {
+            if(steps != null  && savedInstanceState == null) {
                 Bundle stepBundle = new Bundle();
                 stepBundle.putParcelable(getString(R.string.step_key), steps.get(position));
                 StepDetailsFragment fragment = new StepDetailsFragment();
@@ -66,7 +66,9 @@ public class StepDetailsActivity extends AppCompatActivity {
             }
         }
 
-        prepareFabs();
+        if(steps != null) {
+            prepareFabs();
+        }
     }
 
     private void prepareFabs() {

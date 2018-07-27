@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="fab_margin">16dp</dimen>
-
     <!--
 Refer to App Widget Documentation for margin information
 http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
     <dimen name="widget_margin">8dp</dimen>
+    <dimen name="margin_large">16dp</dimen>
+    <dimen name="margin_normal">8dp</dimen>
+    <dimen name="padding_normal">8dp</dimen>
+    <dimen name="padding_small">4dp</dimen>
+    <dimen name="app_bar_elevation">4dp</dimen>
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="cardview_elevation">4dp</dimen>
 </resources>

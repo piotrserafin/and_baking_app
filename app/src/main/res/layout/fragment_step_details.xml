@@ -15,21 +15,35 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0">
+        app:layout_constraintHorizontal_bias="0.0"
+        android:visibility="gone">
 
     </com.google.android.exoplayer2.ui.PlayerView>
+
+    <ImageView
+        android:id="@+id/step_thumbnail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin_normal"
+        android:layout_marginEnd="@dimen/margin_normal"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/step_player"/>
 
     <TextView
         android:id="@+id/step_description"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="8dp"
+        android:padding="@dimen/padding_normal"
         android:textColor="@color/primary_text"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/step_player"/>
-
+        app:layout_constraintTop_toBottomOf="@+id/step_thumbnail"/>
 
 </android.support.constraint.ConstraintLayout>
